@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Map</title>
+    <link href="default.css" rel="stylesheet">
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script>
+
+         function loadFile(file) {
+           
+             var xhr = new XMLHttpRequest();
+
+             // On souhaite juste récupérer le contenu du fichier, la méthode GET suffit amplement :
+             xhr.open('GET', file,false);
+
+             xhr.addEventListener('readystatechange', function() { // On gère ici une requête asynchrone
+
+                 if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200){ // Si le fichier est chargé sans erreur
+
+                    
+                    
+                 }
+
+             });
+
+             xhr.send(null); // La requête est prête, on envoie tout !
+
+             return xhr.responseText.split("\n");
+             
+         }
+
+         
+         
+         
+          var directionsDisplay;
+          var map;
+          var waypts =[];
+          
+          
+          
+        function initialize() {
+
+          var casablanca = new google.maps.LatLng(33.557418,-7.578034);
+          var mapOptions = {
+            zoom: 6,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            center: casablanca
+          }
+          map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+        }
+
+
+
+        function cityAt(i,j){
+            
+          return excel_sheet.Cells(a,b).Value;
+          
+        }
+
+        function caluculateRoute(adresse1, adresse2)
+        {
+          var directionsService = new google.maps.DirectionsService();
+          var directionsDisplay = new google.maps.DirectionsRenderer({ 'map': map });
+          var request = {
+                        origin : adresse1,
+                        destination: adresse2,
+                        travelMode : google.maps.DirectionsTravelMode.DRIVING,
+                        unitSystem: google.maps.DirectionsUnitSystem.METRIC
+                    };
+
+          directionsService.route(request, function(response, status) {
+                      if (status == google.maps.DirectionsStatus.OK) {
+                              directionsDisplay.setDirections(response);
+
+                          }
+                      }); 
+
+        }
+
+        function calcRoute() {
+              
+              waypts = loadFile("solution.txt");
+              for(var i = 0 ; i < waypts[0]-1;i++)
+                caluculateRoute(waypts[i+1],waypts[i+2]);
+              caluculateRoute(waypts[i],waypts[1])
+
+        }
+
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+        // onLoad="calcRoute();"
+        </script>
+
+  </head>
+  <body onload="calcRoute();">
+    <div id="map-canvas" style="float:left;width:70%;height:100%;"></div>
+    <div id="control_panel" style="float:right;width:30%;text-align:left;padding-top:20px">
+    <div style="margin:20px;border-width:2px;">
+  
+  
+ 
+    <br>
+  
+    <br>
+     <!-- <input type="submit" onclick="calcRoute();">  -->
+    </div>
+
+    <div id="panel" style="margin:20px;"></div>
+    <div id="directions_panel" style="margin:20px;background-color:#FFEE77;"></div>
+    </div>
+
+    
+        
+  </body>
+</html>
